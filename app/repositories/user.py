@@ -18,9 +18,13 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         return db.query(self.model_type).filter(self.model_type.email == email).first()
 
     def create(self, db: Session, *, dto_schema: UserCreate) -> User:
+        hashed_password = self.password_utils.encrypt_password(dto_schema.password)
+        dto_data = dto_schema.dict()
+        del dto_data['password']
+
         entity = User(
-            **dto_schema.dict(),
-            hashed_password=self.password_utils.encrypt_password(dto_schema.password)
+            **dto_data,
+            hashed_password=hashed_password
         )
         db.add(entity)
         db.commit()

@@ -22,7 +22,7 @@ async def get_users(
         skip: Optional[int] = 0,
         limit: Optional[int] = 0
 ) -> Any:
-    if limit != 0:
+    if limit == 0:
         users = user_repo.get_all(db)
     else:
         users = user_repo.get_multi(db, skip=skip, limit=limit)
