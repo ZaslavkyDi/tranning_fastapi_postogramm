@@ -8,6 +8,11 @@ verify_ssl = true
 [packages]
 fastapi = "*"
 loguru = "*"
+uvicorn = "*"
+python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+sqlalchemy = "*"
+fastapi-jwt-auth = "*"
 
 [requires]
 python_version = "3.9"
