@@ -5,12 +5,12 @@ from pydantic.class_validators import validator
 from pydantic.main import BaseModel
 from pydantic.networks import EmailStr
 
-from ..core.settings import Settings
+from ..core.config import Settings
 
 
 class UserBase(BaseModel):
     email: Optional[EmailStr] = None
-    is_active: Optional[bool] = True
+    is_active: Optional[bool] = False
     is_superuser: bool = False
     birth_date: Optional[datetime.date] = None
     first_name: Optional[str] = None
@@ -20,10 +20,10 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     email: EmailStr
     password: str
-    birth_date: datetime.date = None
+    birth_date: datetime.date
 
     @validator('birth_date', pre=True)
-    def check_user_age(self, value: datetime.date) -> datetime.date:
+    def check_user_age(cls, value: datetime.date) -> datetime.date:
         today = datetime.date.today()
         user_age = today.year - value.year
 
