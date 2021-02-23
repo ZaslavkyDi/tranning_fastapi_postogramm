@@ -20,7 +20,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
     def create(self, db: Session, *, dto_schema: UserCreate) -> User:
         entity = User(
             **dto_schema.dict(),
-            hashed_password=self.password_utils.password_to_hash(dto_schema.password)
+            hashed_password=self.password_utils.encrypt_password(dto_schema.password)
         )
         db.add(entity)
         db.commit()
@@ -40,7 +40,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
 
         new_password = update_data['password']
         if new_password:
-            hashed_password = self.password_utils.password_to_hash(new_password)
+            hashed_password = self.password_utils.encrypt_password(new_password)
             update_data['hashed_password'] = hashed_password
             del update_data['password']
 

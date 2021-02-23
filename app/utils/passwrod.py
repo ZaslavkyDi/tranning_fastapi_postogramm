@@ -7,7 +7,7 @@ class BCryptPasswordUtils:
     def __init__(self):
         self.crypt_context = CryptContext(schemes=self.ENCRYPT_SCHEMAS, deprecated='auto')
 
-    def password_to_hash(self, password: str) -> str:
+    def encrypt_password(self, password: str) -> str:
         return self.crypt_context.hash(password)
 
     def verify_password(self, password: str, hashed_password: str) -> bool:
