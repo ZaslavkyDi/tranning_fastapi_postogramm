@@ -14,10 +14,10 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         super(UserRepository, self).__init__(model_type=User)
         self.password_utils = BCryptPasswordUtils()
 
-    def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
+    def get_by_email(self, db: Session, /, email: str) -> Optional[User]:
         return db.query(self.model_type).filter(self.model_type.email == email).first()
 
-    def create(self, db: Session, *, dto_schema: UserCreate) -> User:
+    def create(self, db: Session, /, dto_schema: UserCreate) -> User:
         hashed_password = self.password_utils.encrypt_password(dto_schema.password)
         dto_data = dto_schema.dict()
         del dto_data['password']
@@ -33,7 +33,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
         return entity
 
     def update(
-            self, db: Session, *,
+            self, db: Session, /,
             entity: User,
             dto_schema: Union[UserUpdate, Dict[str, Any]]
     ) -> User:
@@ -50,7 +50,7 @@ class UserRepository(BaseRepository[User, UserCreate, UserUpdate]):
 
         return super().update(db, entity=entity, dto_schema=update_data)
 
-    def authenticate(self, db: Session, *, email: str, password: str) -> Optional[User]:
+    def authenticate(self, db: Session, /, email: str, password: str) -> Optional[User]:
         user = self.get_by_email(db, email=email)
 
         if not user or not self.password_utils.verify_password(password, hashed_password=user.hashed_password):

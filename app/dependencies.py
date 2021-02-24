@@ -3,11 +3,13 @@ from typing import Generator
 import fastapi
 from fastapi.exceptions import HTTPException
 from fastapi.params import Depends
+from fastapi_jwt_auth.auth_jwt import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic.error_wrappers import ValidationError
 
 from app.db.session import SessionLocal
 from app.models.user import User
+from app.repositories.user import user_repo
 
 
 def get_db() -> Generator:
@@ -20,7 +22,9 @@ def get_db() -> Generator:
 
 def get_current_user(
         db: SessionLocal = Depends(get_db),
+        authorize: AuthJWT = Depends()
 ) -> User:
+    authorize.jwt_required()
     try:
         pass
     except (AuthJWTException, ValidationError):
@@ -29,7 +33,9 @@ def get_current_user(
             detail="Could not validate credentials",
         )
 
-    user = None
+    user_email = authorize.get_jwt_subject()
+    user = user_repo.get_by_email(db, email=user_email)
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
