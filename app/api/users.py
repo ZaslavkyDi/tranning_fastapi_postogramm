@@ -11,7 +11,6 @@ from app.dependencies import get_db
 from app.repositories.user import user_repo
 
 router = APIRouter(
-    prefix='/users',
     tags=['users']
 )
 
