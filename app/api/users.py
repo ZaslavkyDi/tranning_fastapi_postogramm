@@ -29,8 +29,8 @@ async def get_users(
     return users
 
 
-@router.get('/{id}', response_model=schemas.User)
-async def get_user_by_id(db: Session = Depends(get_db), id: int = Path(...)) -> Any:
+@router.get('/{user_id}', response_model=schemas.User)
+async def get_user_by_id(db: Session = Depends(get_db), user_id: int = Path(...)) -> Any:
     return user_repo.get_by_email(db, id=id)
 
 

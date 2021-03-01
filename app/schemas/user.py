@@ -1,13 +1,11 @@
 import datetime
 from typing import Optional
 
-from fastapi.exceptions import HTTPException
 from pydantic.class_validators import validator
 from pydantic.main import BaseModel
 from pydantic.networks import EmailStr
-from starlette.status import HTTP_409_CONFLICT
 
-from ..core.config import settings
+from .validators.user_validator import check_user_age
 
 
 class UserBase(BaseModel):
@@ -24,20 +22,17 @@ class UserCreate(UserBase):
     password: str
     birth_date: datetime.date
 
-    @validator('birth_date', pre=True)
-    def check_user_age(cls, value: str) -> datetime.date:
-        birth_date = datetime.datetime.strptime(value, '%Y-%m-%d')
-        today = datetime.date.today()
+    _check_user_age_birth_day = validator('birth_date', pre=True, allow_reuse=True)(check_user_age)
 
-        user_age = today.year - birth_date.year
 
-        if settings.MIN_USER_AGE > user_age:
-            raise HTTPException(
-                status_code=HTTP_409_CONFLICT,
-                detail=f"User's age less then {settings.MIN_USER_AGE}!"
-            )
+class UserRegistrarse(BaseModel):
+    email: EmailStr
+    password: str
+    birth_date: datetime.date
+    first_name: str
+    last_name: str
 
-        return birth_date
+    _check_user_age_birth_day = validator('birth_date', pre=True, allow_reuse=True)(check_user_age)
 
 
 class UserUpdate(UserBase):

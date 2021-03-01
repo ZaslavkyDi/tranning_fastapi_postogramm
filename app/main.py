@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from fastapi_jwt_auth import AuthJWT
 
-from app.api import users, auth
+from app.api import users, auth, posts
 from app.core.config import settings
 
 app = FastAPI()
@@ -16,6 +16,7 @@ def get_config():
 
 app.include_router(router=auth.router, prefix='/auth', )
 app.include_router(router=users.router, prefix='/users', )
+app.include_router(router=posts.router, prefix='/posts', )
 
 
 def custom_openapi():
