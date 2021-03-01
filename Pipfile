@@ -13,8 +13,9 @@ python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 sqlalchemy = "*"
 fastapi-jwt-auth = "*"
-pydantic = {extras = ["email"], version = "*"}
+pydantic = {extras = ["dotenv"], version = "*"}
 alembic = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.9"

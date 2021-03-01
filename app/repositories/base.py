@@ -57,6 +57,12 @@ class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         return entity
 
+    @staticmethod
+    def save_or_update(db: Session, /, entity: ModelType) -> ModelType:
+        db.commit()
+        db.refresh(entity)
+        return entity
+
     def delete(self, db: Session, /, id: Any) -> ModelType:
         entity = db.query(self.model_type).get(id)
         db.delete(entity)

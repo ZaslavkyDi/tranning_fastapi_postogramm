@@ -3,8 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.env
 # C extensions
 *.so
+
+alembic.ini
 
 # Distribution / packaging
 .Python
