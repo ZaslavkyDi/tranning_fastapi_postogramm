@@ -2,9 +2,9 @@ from typing import Optional, Union, Dict, Any
 
 from sqlalchemy.orm.session import Session
 
-from app.models.user import User
+from app.entities.user import User
 from app.repositories.base import BaseRepository
-from app.schemas.user import UserCreate, UserUpdate
+from app.models.user import UserCreate, UserUpdate
 from app.utils.passwrod import BCryptPasswordUtils
 
 

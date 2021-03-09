@@ -1,16 +1,44 @@
-from sqlalchemy import func
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import Column, ForeignKey
-from sqlalchemy.sql.sqltypes import Integer, String, Text, DateTime
+import datetime
+from typing import Optional
 
-from app.db.base_class import Base
+from pydantic import BaseModel
 
 
-class Post(Base):
-    id = Column(Integer, primary_key=True)
-    title = Column(String, index=True)
-    content = Column(Text)
-    published_date = Column(DateTime, server_default=func.now(), nullable=False)
-    updated_date = Column(DateTime, onupdate=func.now(), nullable=True)
-    author_id = Column(Integer, ForeignKey('user.id'))
-    author = relationship('User', back_populates='posts')
+class PostBase(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    author_id: Optional[int] = None
+    published_date: Optional[datetime.datetime] = None
+    updated_date: Optional[datetime.datetime] = None
+
+
+class PostCreate(BaseModel):
+    title: str
+    content: str
+
+
+class PostUpdate(PostCreate):
+    title: Optional[str] = None
+    content: Optional[str] = None
+
+
+class PostInDBBase(PostBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class PostOutDB(PostInDBBase):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    author_id: Optional[int] = None
+    published_date: Optional[datetime.datetime] = None
+    updated_date: Optional[datetime.datetime] = None
+
+
+class Post(PostInDBBase):
+    """
+    Additional properties to return via API
+    """
+    pass

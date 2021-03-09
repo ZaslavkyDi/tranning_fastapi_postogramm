@@ -1,17 +1,57 @@
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import Integer, String, Boolean, Date
+import datetime
+from typing import Optional
 
-from app.db.base_class import Base
+from pydantic.class_validators import validator
+from pydantic.main import BaseModel
+from pydantic.networks import EmailStr
+
+from .validators.user_validator import check_user_age
 
 
-class User(Base):
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String, index=True)
-    last_name = Column(String, index=True)
-    email = Column(String, index=True, unique=True, nullable=False)
-    birth_date = Column(Date, nullable=True)
-    hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean, default=False)
-    is_superuser = Column(Boolean, default=False)
-    posts = relationship('Post', back_populates='author')
+class UserBase(BaseModel):
+    email: Optional[EmailStr] = None
+    is_active: Optional[bool] = False
+    is_superuser: bool = False
+    birth_date: Optional[datetime.date] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+
+class UserCreate(UserBase):
+    email: EmailStr
+    password: str
+    birth_date: datetime.date
+
+    _check_user_age_birth_day = validator('birth_date', pre=True, allow_reuse=True)(check_user_age)
+
+
+class UserRegistrarse(BaseModel):
+    email: EmailStr
+    password: str
+    birth_date: datetime.date
+    first_name: str
+    last_name: str
+
+    _check_user_age_birth_day = validator('birth_date', pre=True, allow_reuse=True)(check_user_age)
+
+
+class UserUpdate(UserBase):
+    password: Optional[str] = None
+
+
+class UserInDBBase(UserBase):
+    id: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+class UserInDB(UserInDBBase):
+    hashed_password: str
+
+
+class User(UserInDBBase):
+    """
+    Additional properties to return via API
+    """
+    pass

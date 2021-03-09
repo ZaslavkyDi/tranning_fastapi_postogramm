@@ -16,10 +16,10 @@ def check_user_age(value: Union[datetime.datetime, str]) -> datetime.date:
     today = datetime.date.today()
     user_age = today.year - birth_date.year
 
-    if settings.MIN_USER_AGE > user_age:
+    if settings.min_user_age > user_age:
         raise HTTPException(
             status_code=HTTP_409_CONFLICT,
-            detail=f"User's age less then {settings.MIN_USER_AGE}!"
+            detail=f"User's age less then {settings.min_user_age}!"
         )
 
     return value

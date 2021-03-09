@@ -3,12 +3,12 @@ from typing import List
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 
-from app.dependencies import get_db
-from app.models.post import Post
-from app.models.user import User
+from app.dependencies.db import get_db
+from app.entities.post import Post
+from app.entities.user import User
 from app.repositories.post import post_repo
 from app.repositories.user import user_repo
-from app.schemas.post import PostCreate, PostUpdate
+from app.models.post import PostCreate, PostUpdate
 
 
 class PostService:
@@ -17,7 +17,7 @@ class PostService:
         self._db = db
 
     def create_post(self, create_schema: PostCreate, current_user: User) -> Post:
-        saved_post = post_repo.create(
+        saved_post = post_repo.create_user(
             self._db,
             dto_schema=create_schema,
         )

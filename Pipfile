@@ -16,6 +16,9 @@ fastapi-jwt-auth = "*"
 pydantic = {extras = ["dotenv"], version = "*"}
 alembic = "*"
 psycopg2-binary = "*"
+celery = "*"
+sendgrid = "*"
+flower = "*"
 
 [requires]
 python_version = "3.9"

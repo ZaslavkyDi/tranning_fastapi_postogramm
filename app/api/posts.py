@@ -4,9 +4,9 @@ from fastapi import APIRouter, Path
 from fastapi.params import Depends, Body
 
 from app.api.services.posts import PostService
-from app.dependencies import get_user_post_owner, get_current_active_user
-from app.models.user import User
-from app.schemas.post import PostCreate, PostOutDB, PostUpdate
+from app.dependencies.user import get_user_post_owner, get_current_active_user
+from app.entities.user import User
+from app.models.post import PostCreate, PostOutDB, PostUpdate
 
 router = APIRouter(
     tags=['posts'],

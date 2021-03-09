@@ -5,10 +5,10 @@ from fastapi.params import Depends, Path, Body
 from fastapi_jwt_auth.auth_jwt import AuthJWT
 
 from app.api.services.auth import AuthService
-from app.dependencies import get_authorized_user
-from app.models.user import User
-from app.schemas.tokens import Tokens
-from app.schemas.user import UserRegistrarse
+from app.dependencies.auth import get_authorized_user
+from app.entities.user import User
+from app.models.tokens import Tokens
+from app.models.user import UserRegistrarse
 
 router = APIRouter(
     tags=['auth']
@@ -17,10 +17,10 @@ router = APIRouter(
 
 @router.post('/registration', response_model=Tokens, response_model_exclude_unset=True)
 async def registration(
+        request: Request,
         user: UserRegistrarse = Body(...),
-        auth_service: AuthService = Depends(),
         authorize: AuthJWT = Depends(),
-        request: Request = None
+        auth_service: AuthService = Depends(),
 ) -> Any:
     not_active_new_user = auth_service.register_user(user)
 
