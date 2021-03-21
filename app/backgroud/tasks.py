@@ -1,16 +1,14 @@
-from sendgrid import Mail, SendGridAPIClient
-
-from app.core.config import settings
+from app.api.services.email import EmailSender
+from app.backgroud.worker import celery
+from app.core.enums import EmailMimeTypeEnum
 
 
 # @celery.task()
-def send_email(to: str, subject: str, html: str) -> None:
-    sendgrid = SendGridAPIClient(settings.sendgrid_api_key)
-    message = Mail(
-        from_email=settings.email_from,
-        to_emails=to,
+def send_html_email(to: str, subject: str, html: str) -> None:
+    email_sender = EmailSender()
+    email_sender.send_email(
+        to=to,
         subject=subject,
-        html_content=html
+        content=html,
+        mimetype=EmailMimeTypeEnum.html
     )
-
-    sendgrid.send(message)

@@ -3,6 +3,9 @@ from typing import Any
 from fastapi import APIRouter, Request
 from fastapi.params import Depends, Path, Body
 from fastapi_jwt_auth.auth_jwt import AuthJWT
+from starlette.background import BackgroundTasks
+from starlette.responses import JSONResponse
+from starlette.status import HTTP_200_OK
 
 from app.api.services.auth import AuthService
 from app.dependencies.auth import get_authorized_user
@@ -15,35 +18,33 @@ router = APIRouter(
 )
 
 
-@router.post('/registration', response_model=Tokens, response_model_exclude_unset=True)
+@router.post('/registration')
 async def registration(
         request: Request,
+        background_tasks: BackgroundTasks,
         user: UserRegistrarse = Body(...),
-        authorize: AuthJWT = Depends(),
         auth_service: AuthService = Depends(),
 ) -> Any:
     not_active_new_user = auth_service.register_user(user)
 
-    activation_key = auth_service.encode_user_activation_token(user=not_active_new_user)
-    activation_url = request.url_for('user_activation', activate_key=activation_key)
-    auth_service.send_activation_email(
+    activation_token = auth_service.encode_activation_token(user_data=user)
+    activation_url = request.url_for('user_activation', activate_token=activation_token)
+
+    background_tasks.add_task(
+        auth_service.send_activation_email,
         activation_url=activation_url,
         user=not_active_new_user
     )
-    return Tokens(
-        access_token=authorize.create_access_token(subject=not_active_new_user.email, fresh=False),
-    )
+    return JSONResponse(status_code=HTTP_200_OK, content='success')
 
 
-@router.get('/user_activation/{activate_key}')
+@router.get('/user_activation/{activate_token}')
 async def user_activation(
-        activate_key: str = Path(...),
-        authorize: AuthJWT = Depends(),
+        activate_token: str = Path(...),
+        auth_service: AuthService = Depends(),
 ) -> Any:
-    # 1. get user from the token
-    # 2. activate user
-    # 3. redirect to login
-    pass
+    user_data = auth_service.decode_activation_token(token=activate_token)
+    auth_service.activate_user_by_token(user_data)
 
 
 @router.post('/login', response_model=Tokens)

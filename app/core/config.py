@@ -8,13 +8,18 @@ dotenv.load_dotenv(env_file_path)
 
 
 class Settings(BaseSettings):
+    # openssl rand -hex 32
     authjwt_secret_key: str = os.getenv('JWT_SECRET')
+    authjwt_algorithm: str = 'HS256'
+    activate_token_expire_hours: int = os.getenv('ACTIVATE_TOKEN_EXPIRE_HOURS')
 
     min_user_age: int = os.getenv('MIN_USER_AGE')
     db_url: str = os.getenv('DB_URL')
 
-    email_from = os.getenv('EMAIL_FROM')
-    sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+    smtp_server: str = os.getenv('SMTP_SERVER')
+    smtp_server_port: int = os.getenv('SMTP_SERVER_PORT')
+    email_sender: str = os.getenv('EMAIL_SENDER')
+    email_password: str = os.getenv('EMAIL_PASSWORD')
 
 
 class CelerySettings(BaseSettings):
